@@ -1,0 +1,64 @@
+version: '3.3'
+
+# Configure services
+services:
+  #==========================================#
+  #             DATABASE STUFF               #
+  #==========================================#
+
+  # MySQL image for local testing
+  sql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: core
+
+  #===================================#
+  #             COMMANDS              #
+  #===================================#
+
+  base-command: &base-command
+    image: node:lts-slim
+    tty: true
+    environment:
+      SQL_HOST: sql
+      SQL_PORT: 3306
+      SQL_USERNAME: root
+      SQL_PASSWORD: test
+      SQL_DATABASE_NAME: core
+    depends_on:
+      - sql
+    working_dir: /app
+    volumes:
+      - './:/app'
+
+  # Run migrations to latest version
+  migration-up:
+    <<: *base-command
+    entrypoint: bash
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+      yarn start:dev
+
+  migration-down:
+    <<: *base-command
+    entrypoint: bash
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+        yarn mikro-orm migration:down
+
+  # Create new migration from schema diff
+  migration-create:
+    <<: *base-command
+    entrypoint: bash
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+        yarn mikro-orm migration:create
+
+  # Start server
+  start-dev:
+    <<: *base-command
+    entrypoint: bash
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+        yarn nest start --watch
