@@ -1,11 +1,19 @@
 # Mikro-ORM Reproductions
 
+## Installation
+
+```
+yarn
+```
+
 ## Environment
 
 Environment variables can be changed in the `.env` file, which are then used in
 the `mikro-orm.config.ts` file to connect to the database.
 
-## With Docker Compose
+## Commands
+
+### With Docker Compose
 
 If you have have docker-compose installed you can use the docker versions of the
 commands, which runs a MySQL docker container as part of the setup, meaning no
@@ -25,7 +33,7 @@ installation of MySQL is required on your system. Just docker is needed.
 
 ---
 
-## Without Docker Compose
+### Without Docker Compose
 
 **Creating migrations**
 `yarn mikro-orm migration:create -d`
