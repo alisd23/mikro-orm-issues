@@ -1,13 +1,12 @@
-import { Entity, PrimaryKey } from '@mikro-orm/core';
+import { Entity, Enum, PrimaryKey } from '@mikro-orm/core';
 
 @Entity({
   discriminatorColumn: 'type',
-  discriminatorMap: {
-    person: 'Person', // Uncomment this line
-    employee: 'Employee',
-  },
 })
-export class Person {
+export abstract class Person {
   @PrimaryKey()
   id: string;
+
+  @Enum()
+  type!: 'gardener' | 'teacher' | 'chef';
 }

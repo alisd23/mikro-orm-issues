@@ -18,9 +18,9 @@
     "migration:down": "docker-compose up migration-down"
   },
   "dependencies": {
-    "@mikro-orm/core": "^4.0.7",
-    "@mikro-orm/mysql": "^4.0.7",
-    "@mikro-orm/nestjs": "^4.1.0",
+    "@mikro-orm/core": "^4.1.0",
+    "@mikro-orm/mysql": "^4.1.1",
+    "@mikro-orm/nestjs": "^4.2.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
@@ -30,7 +30,7 @@
     "rxjs": "^6.5.4"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^4.0.7",
+    "@mikro-orm/cli": "^4.1.1",
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
