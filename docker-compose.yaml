@@ -38,14 +38,14 @@ services:
     entrypoint: bash
     command: >-
       ./scripts/wait-for-it.sh sql:3306 -s --
-      yarn start:dev
+      yarn mikro-orm migration:up
 
   migration-down:
     <<: *base-command
     entrypoint: bash
     command: >-
       ./scripts/wait-for-it.sh sql:3306 -s --
-        yarn mikro-orm migration:down
+        yarn mikro-orm migration:down --to 0
 
   # Create new migration from schema diff
   migration-create:
@@ -62,3 +62,11 @@ services:
     command: >-
       ./scripts/wait-for-it.sh sql:3306 -s --
         yarn nest start --watch
+
+  # Test
+  test:
+    <<: *base-command
+    entrypoint: bash
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+        yarn jest

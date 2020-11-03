@@ -10,17 +10,17 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
     "start:prod": "node dist/main",
     "start:dev": "docker-compose up start-dev",
+    "test": "docker-compose run test",
     "migration:up": "docker-compose up migration-up",
     "migration:create": "docker-compose up migration-create",
     "migration:down": "docker-compose up migration-down"
   },
   "dependencies": {
-    "@mikro-orm/core": "^4.0.7",
-    "@mikro-orm/mysql": "^4.0.7",
-    "@mikro-orm/nestjs": "^4.1.0",
+    "@mikro-orm/core": "^4.2.3",
+    "@mikro-orm/mysql": "^4.2.3",
+    "@mikro-orm/nestjs": "^4.2.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
@@ -30,7 +30,7 @@
     "rxjs": "^6.5.4"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^4.0.7",
+    "@mikro-orm/cli": "^4.2.3",
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
