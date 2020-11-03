@@ -1,7 +1,6 @@
 import { MikroORM } from '@mikro-orm/core';
 
 import { Address, Manager } from '../database/entities';
-import config from '../mikro-orm.config';
 
 /**
  * Delete all records from all the entity tables in the database
@@ -26,9 +25,14 @@ export async function clearDatabase(orm: MikroORM) {
 describe('Bug test cases', () => {
   let orm: MikroORM;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     orm = await MikroORM.init();
+  });
+  beforeEach(async () => {
     await clearDatabase(orm);
+  });
+  afterAll(async () => {
+    await orm.close();
   });
 
   describe('STI collection issue', () => {

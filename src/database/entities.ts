@@ -10,15 +10,16 @@ import {
 
 @Entity({
   discriminatorColumn: 'type',
-  discriminatorMap: { person: 'Person', employee: 'Employee' },
+  discriminatorMap: { manager: 'Manager', employee: 'Employee' },
 })
-export abstract class BasePerson {
+export class BasePerson {
   @PrimaryKey()
   id!: number;
 
   @Enum()
   type!: 'employee' | 'manager';
 
+  // @OneToMany('Address', 'person')
   @OneToMany(
     () => Address,
     address => address.person,
@@ -55,6 +56,7 @@ export class Address {
   @Property()
   line1: string;
 
+  // @ManyToOne('BasePerson')
   @ManyToOne(() => BasePerson)
   person: BasePerson;
 }
