@@ -13,14 +13,19 @@
     "start:prod": "node dist/main",
     "start:dev": "docker-compose up start-dev",
     "test": "docker-compose run test",
+    "test:watch": "docker-compose run test-watch",
     "migration:up": "docker-compose up migration-up",
     "migration:create": "docker-compose up migration-create",
     "migration:down": "docker-compose up migration-down"
   },
   "dependencies": {
-    "@mikro-orm/core": "^4.2.3",
-    "@mikro-orm/mysql": "^4.2.3",
-    "@mikro-orm/nestjs": "^4.2.0",
+    "@mikro-orm/core": "4.2.4-dev.103",
+    "@mikro-orm/mysql": "4.2.4-dev.103",
+    "@mikro-orm/mysql-base": "4.2.4-dev.103",
+    "@mikro-orm/knex": "4.2.4-dev.103",
+    "@mikro-orm/migrations": "4.2.4-dev.103",
+    "@mikro-orm/entity-generator": "4.2.4-dev.103",
+    "@mikro-orm/nestjs": "4.2.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
@@ -30,7 +35,7 @@
     "rxjs": "^6.5.4"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^4.2.3",
+    "@mikro-orm/cli": "4.2.4-dev.103",
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",

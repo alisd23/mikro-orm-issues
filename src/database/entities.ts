@@ -10,53 +10,59 @@ import {
 
 @Entity({
   discriminatorColumn: 'type',
-  discriminatorMap: { manager: 'Manager', employee: 'Employee' },
+  abstract: true,
 })
-export class BasePerson {
+export abstract class Vehicle {
   @PrimaryKey()
   id!: number;
 
   @Enum()
-  type!: 'employee' | 'manager';
+  type!: 'car' | 'bicycle';
 
-  // @OneToMany('Address', 'person')
   @OneToMany(
-    () => Address,
-    address => address.person,
+    () => Driver,
+    driver => driver.vehicle,
   )
-  addresses = new Collection<Address>(this);
+  drivers = new Collection<Driver>(this);
 }
 
-@Entity()
-export class Employee extends BasePerson {
-  constructor() {
+@Entity({ discriminatorValue: 'car' })
+export class Car extends Vehicle {
+  constructor(engine: string) {
     super();
-    this.type = 'employee';
+    this.type = 'car';
+    this.engine = engine;
   }
+
+  @Property()
+  public engine: string;
 }
 
-@Entity()
-export class Manager extends BasePerson {
-  constructor() {
+@Entity({ discriminatorValue: 'bicycle' })
+export class Bicycle extends Vehicle {
+  constructor(noOfGears: number) {
     super();
-    this.type = 'manager';
+    this.type = 'bicycle';
+    this.noOfGears = noOfGears;
   }
+
+  @Property()
+  public noOfGears: number;
 }
 
 @Entity()
-export class Address {
-  constructor(line1: string, person: BasePerson) {
-    this.line1 = line1;
-    this.person = person;
+export class Driver {
+  constructor(name: string, person: Vehicle) {
+    this.name = name;
+    this.vehicle = person;
   }
 
   @PrimaryKey()
   id: number;
 
   @Property()
-  line1: string;
+  name: string;
 
-  // @ManyToOne('BasePerson')
-  @ManyToOne(() => BasePerson)
-  person: BasePerson;
+  @ManyToOne(() => Vehicle)
+  vehicle: Vehicle;
 }

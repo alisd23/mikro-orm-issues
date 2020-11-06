@@ -15,31 +15,16 @@ dotenv.config();
 export default async () => {
   console.log('\n===== JEST GLOBAL SETUP =====\n');
 
-  const t0 = Date.now();
-
   const orm = await MikroORM.init();
   const generator = orm.getSchemaGenerator();
 
   console.log(`> Dropping database schema: ${orm.config.get('dbName')}`);
   await generator.dropSchema(undefined, true);
 
-  const connectTime = Date.now();
+  console.log('> Creating schema from entities');
+  await generator.createSchema();
 
-  const migrator = orm.getMigrator();
-  console.log('> Running Migrations');
-  const migrations = await migrator.up();
-
-  const migrationTime = Date.now();
-
-  console.log(
-    '👩‍🔬 Migrations completed:',
-    migrations.map(m => m.file),
-  );
-
-  console.log(
-    `👩‍🔬 Connected in ${connectTime -
-      t0}ms - Executed migrations in ${migrationTime - connectTime}ms.`,
-  );
+  console.log('👩‍🔬 Schema creation completed');
 
   await orm.close(true);
 };

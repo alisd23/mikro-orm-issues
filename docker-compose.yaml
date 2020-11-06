@@ -69,4 +69,14 @@ services:
     entrypoint: bash
     command: >-
       ./scripts/wait-for-it.sh sql:3306 -s --
-        yarn jest
+        yarn jest --run-in-band
+
+  # Test watch
+  test-watch:
+    <<: *base-command
+    entrypoint: bash
+    tty: true
+    stdin_open: true
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+        yarn jest --run-in-band --watchAll

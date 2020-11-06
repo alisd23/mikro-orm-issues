@@ -2,7 +2,7 @@ import { Options } from '@mikro-orm/core';
 import { MySqlDriver } from '@mikro-orm/mysql';
 import dotenv from 'dotenv';
 
-import { Address, BasePerson, Employee, Manager } from './database/entities';
+import { Driver, Vehicle, Car, Bicycle } from './database/entities';
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ const config: Options<MySqlDriver> = {
   password: process.env.SQL_PASSWORD,
   dbName: process.env.SQL_DATABASE_NAME,
   debug: true,
-  entities: [BasePerson, Employee, Manager, Address],
+  entities: [Vehicle, Car, Bicycle, Driver],
 };
 
 export default config;
