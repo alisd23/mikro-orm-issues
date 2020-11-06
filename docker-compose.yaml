@@ -1,4 +1,4 @@
-version: '3.3'
+version: "3.3"
 
 # Configure services
 services:
@@ -30,7 +30,7 @@ services:
       - sql
     working_dir: /app
     volumes:
-      - './:/app'
+      - "./:/app"
 
   # Run migrations to latest version
   migration-up:
@@ -62,3 +62,21 @@ services:
     command: >-
       ./scripts/wait-for-it.sh sql:3306 -s --
         yarn nest start --watch
+
+  # Test
+  test:
+    <<: *base-command
+    entrypoint: bash
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+        yarn jest --run-in-band
+
+  # Test watch
+  test-watch:
+    <<: *base-command
+    entrypoint: bash
+    tty: true
+    stdin_open: true
+    command: >-
+      ./scripts/wait-for-it.sh sql:3306 -s --
+        yarn jest --run-in-band --watchAll

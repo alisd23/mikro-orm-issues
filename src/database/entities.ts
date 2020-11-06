@@ -1,29 +1,68 @@
-import { Entity, Enum, PrimaryKey } from '@mikro-orm/core';
+import {
+  Entity,
+  Enum,
+  PrimaryKey,
+  OneToMany,
+  Collection,
+  Property,
+  ManyToOne,
+} from "@mikro-orm/core";
 
 @Entity({
-  discriminatorColumn: 'type',
-  discriminatorMap: { person: 'Person', employee: 'Employee' },
+  discriminatorColumn: "type",
+  abstract: true,
 })
-export abstract class BasePerson {
+export abstract class Vehicle {
   @PrimaryKey()
   id: number;
 
   @Enum()
-  type!: 'employee' | 'manager';
+  type!: "car" | "bicycle";
+
+  @OneToMany(
+    () => Driver,
+    (driver) => driver.vehicle
+  )
+  drivers = new Collection<Driver>(this);
+}
+
+@Entity({ discriminatorValue: "car" })
+export class Car extends Vehicle {
+  constructor(engine: string) {
+    super();
+    this.type = "car";
+    this.engine = engine;
+  }
+
+  @Property()
+  public engine: string;
+}
+
+@Entity({ discriminatorValue: "bicycle" })
+export class Bicycle extends Vehicle {
+  constructor(noOfGears: number) {
+    super();
+    this.type = "bicycle";
+    this.noOfGears = noOfGears;
+  }
+
+  @Property()
+  public noOfGears: number;
 }
 
 @Entity()
-export class Employee extends BasePerson {
-  constructor() {
-    super();
-    this.type = 'employee';
+export class Driver {
+  constructor(name: string, person: Vehicle) {
+    this.name = name;
+    this.vehicle = person;
   }
-}
 
-@Entity()
-export class Manager extends BasePerson {
-  constructor() {
-    super();
-    this.type = 'manager';
-  }
+  @PrimaryKey()
+  id: number;
+
+  @Property()
+  name: string;
+
+  @ManyToOne(() => Vehicle)
+  vehicle: Vehicle;
 }
