@@ -28,8 +28,11 @@ installation of MySQL is required on your system. Just docker is needed.
 **Rolling back a single migration**
 `yarn migration:down`
 
-**Running dev server**
-`yarn start:dev`
+**Running tests**
+`yarn test`
+
+**Running tests (and watch)**
+`yarn test:watch`
 
 ---
 
@@ -44,5 +47,8 @@ installation of MySQL is required on your system. Just docker is needed.
 **Rolling back a single migration**
 `yarn mikro-orm migration:down`
 
-**Running dev server**
-`yarn nest start --watch`
+**Running tests**
+`yarn jest --run-in-band`
+
+**Running tests (and watch)**
+`yarn jest --run-in-band --watch`
