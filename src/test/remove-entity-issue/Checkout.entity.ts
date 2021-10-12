@@ -1,15 +1,15 @@
 import { Entity, OneToOne, PrimaryKey } from "@mikro-orm/core";
 
-import { DiscountDeduction } from "./DiscountDeduction.entity";
+import { Discount } from "./Discount.entity";
 
 @Entity()
 export class Checkout {
   @PrimaryKey()
-  id: number;
+  public id: number;
 
-  @OneToOne(() => DiscountDeduction, deduction => deduction.checkout, {
+  @OneToOne(() => Discount, discount => discount.checkout, {
     nullable: true,
     // owner: true,
   })
-  public discountDeduction: DiscountDeduction | null;
+  public discount: Discount | null;
 }

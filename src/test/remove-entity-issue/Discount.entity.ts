@@ -2,15 +2,15 @@ import { Entity, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Checkout } from "./Checkout.entity";
 
 @Entity()
-export class DiscountDeduction {
+export class Discount {
   constructor(amount: number) {
     this.amount = amount;
   }
 
   @PrimaryKey()
-  id: number;
+  public id: number;
 
-  @OneToOne(() => Checkout, checkout => checkout.discountDeduction, {
+  @OneToOne(() => Checkout, checkout => checkout.discount, {
     nullable: true,
     /**
      * @NOTE if owner is set on the `Checkout` side, the tests pass fine
@@ -20,5 +20,5 @@ export class DiscountDeduction {
   public checkout: Checkout | null;
 
   @Property()
-  amount: number;
+  public amount: number;
 }

@@ -4,7 +4,7 @@ import { EntityManager, MySqlDriver } from "@mikro-orm/mysql";
 import config from "../../mikro-orm.config";
 import { clearDatabase, migrateDatabase } from "../test-helpers";
 import { Checkout } from "./Checkout.entity";
-import { DiscountDeduction } from "./DiscountDeduction.entity";
+import { Discount } from "./Discount.entity";
 
 describe("Remove entiy issue", () => {
   let orm: MikroORM<MySqlDriver>;
@@ -14,7 +14,7 @@ describe("Remove entiy issue", () => {
     orm = await MikroORM.init({
       ...config,
       debug: true,
-      entities: [DiscountDeduction, Checkout],
+      entities: [Discount, Checkout],
     });
     await migrateDatabase(orm);
   });
@@ -30,54 +30,53 @@ describe("Remove entiy issue", () => {
     await em.fork().persistAndFlush(entities);
   }
 
-  it.skip("Should be able to remove deduction from checkout", async () => {
+  it("Should be able to remove discount from checkout", async () => {
     let checkout = new Checkout();
-    checkout.discountDeduction = new DiscountDeduction(1000);
+    checkout.discount = new Discount(1000);
     await insertEntities([checkout]);
 
-    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
+    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discount']);
 
-    // Check deduction loads correctly
-    expect(checkout.discountDeduction.amount).toBe(1000)
+    // Check discount loads correctly
+    expect(checkout.discount.amount).toBe(1000)
 
-    em.remove(checkout.discountDeduction);
+    em.remove(checkout.discount);
     await em.flush();
 
-    checkout = await em.fork().findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
+    checkout = await em.fork().findOneOrFail(Checkout, checkout.id, ['discount']);
 
-    expect(checkout.discountDeduction).toBeFalsy();
+    expect(checkout.discount).toBeFalsy();
   });
 
-  it("Should be able to remove deduction from checkout and add new deduction", async () => {
+  it("Should be able to remove discount from checkout and add new discount", async () => {
     let checkout = new Checkout();
-    checkout.discountDeduction = new DiscountDeduction(1000);
+    checkout.discount = new Discount(1000);
     await insertEntities([checkout]);
 
-    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
+    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discount']);
 
-    // Check deduction loads correctly
-    expect(checkout.discountDeduction.amount).toBe(1000)
+    // Check discount loads correctly
+    expect(checkout.discount.amount).toBe(1000)
 
-    // Try to remove current discount deduction, then add a new one in a single transaction
+    // Try to remove current discount discount, then add a new one in a single transaction
     // Transaction should be like so:
-    // 1. Remove old deduction
-    // 2. Insert new deduction
-    em.remove(checkout.discountDeduction);
-    // checkout.discountDeduction = null;
-    checkout.discountDeduction = new DiscountDeduction(2000);
-    em.persist(checkout.discountDeduction);
-    console.log(em.getUnitOfWork().getRemoveStack());
-    console.log(em.getUnitOfWork().getPersistStack());
+    // 1. Remove old discount
+    // 2. Insert new discount
+    em.remove(checkout.discount);
+    // checkout.discount = null;
+    checkout.discount = new Discount(2000);
+    // console.log(em.getUnitOfWork().getRemoveStack());
+    // console.log(em.getUnitOfWork().getPersistStack());
     // HOWEVER, when flush runs, the removal never happens, or at least the insert is being attempted first,
     // causing a unique constraint violation at the SQL level
     await em.flush();
 
     // Assert
     const newEm = em.fork();
-    checkout = await newEm.findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
-    const deductions = await newEm.find(DiscountDeduction, {});
+    checkout = await newEm.findOneOrFail(Checkout, checkout.id, ['discount']);
+    const discounts = await newEm.find(Discount, {});
 
-    expect(checkout.discountDeduction.amount).toBe(2000);
-    expect(deductions.length).toBe(1);
+    expect(checkout.discount.amount).toBe(2000);
+    expect(discounts.length).toBe(1);
   });
 });
