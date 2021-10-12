@@ -13,7 +13,7 @@ describe("Remove entiy issue", () => {
   beforeAll(async () => {
     orm = await MikroORM.init({
       ...config,
-      debug: false,
+      debug: true,
       entities: [DiscountDeduction, Checkout],
     });
     await migrateDatabase(orm);
@@ -30,7 +30,7 @@ describe("Remove entiy issue", () => {
     await em.fork().persistAndFlush(entities);
   }
 
-  it("Should be able to remove deduction from checkout", async () => {
+  it.skip("Should be able to remove deduction from checkout", async () => {
     let checkout = new Checkout();
     checkout.discountDeduction = new DiscountDeduction(1000);
     await insertEntities([checkout]);
@@ -41,12 +41,11 @@ describe("Remove entiy issue", () => {
     expect(checkout.discountDeduction.amount).toBe(1000)
 
     em.remove(checkout.discountDeduction);
-    checkout.discountDeduction.checkout = null;
     await em.flush();
 
-    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
+    checkout = await em.fork().findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
 
-    expect(checkout.discountDeduction).toBeNull();
+    expect(checkout.discountDeduction).toBeFalsy();
   });
 
   it("Should be able to remove deduction from checkout and add new deduction", async () => {
@@ -60,16 +59,23 @@ describe("Remove entiy issue", () => {
     expect(checkout.discountDeduction.amount).toBe(1000)
 
     // Try to remove current discount deduction, then add a new one in a single transaction
-    // Transactino should be like so:
+    // Transaction should be like so:
     // 1. Remove old deduction
     // 2. Insert new deduction
     em.remove(checkout.discountDeduction);
-    checkout.discountDeduction.checkout = null;
+    // checkout.discountDeduction = null;
     checkout.discountDeduction = new DiscountDeduction(2000);
-    await em.persistAndFlush(checkout);
+    em.persist(checkout.discountDeduction);
+    console.log(em.getUnitOfWork().getRemoveStack());
+    console.log(em.getUnitOfWork().getPersistStack());
+    // HOWEVER, when flush runs, the removal never happens, or at least the insert is being attempted first,
+    // causing a unique constraint violation at the SQL level
+    await em.flush();
 
-    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
-    const deductions = await em.find(DiscountDeduction, {});
+    // Assert
+    const newEm = em.fork();
+    checkout = await newEm.findOneOrFail(Checkout, checkout.id, ['discountDeduction']);
+    const deductions = await newEm.find(DiscountDeduction, {});
 
     expect(checkout.discountDeduction.amount).toBe(2000);
     expect(deductions.length).toBe(1);

@@ -12,6 +12,10 @@ export class DiscountDeduction {
 
   @OneToOne(() => Checkout, checkout => checkout.discountDeduction, {
     nullable: true,
+    /**
+     * @NOTE if owner is set on the `Checkout` side, the tests pass fine
+     */
+    owner: true
   })
   public checkout: Checkout | null;
 
