@@ -45,7 +45,7 @@ describe("Remove entiy issue", () => {
     expect(car.person).toBeTruthy();
     expect(newPerson.car).toBeTruthy();
 
-    await em.flush();
+    await em.persistAndFlush(newPerson);
 
     // Refetch and check relation (owner side)
     car = await em.fork().findOneOrFail(Car, car.id, { populate: ['person'] });
@@ -68,7 +68,7 @@ describe("Remove entiy issue", () => {
     expect(car.person).toBeTruthy();
     expect(newPerson.car).toBeTruthy();
 
-    await em.flush();
+    await em.persistAndFlush(newPerson);
 
     // Refetch and check relation
     car = await em.fork().findOneOrFail(Car, car.id, { populate: ['person'] });
