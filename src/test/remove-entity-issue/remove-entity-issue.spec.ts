@@ -6,7 +6,7 @@ import { clearDatabase, migrateDatabase } from "../test-helpers";
 import { Checkout } from "./Checkout.entity";
 import { Discount } from "./Discount.entity";
 
-describe("Remove entiy issue", () => {
+describe.skip("Remove entiy issue", () => {
   let orm: MikroORM<MySqlDriver>;
   let em: EntityManager;
 
@@ -35,7 +35,7 @@ describe("Remove entiy issue", () => {
     checkout.discount = new Discount(1000);
     await insertEntities([checkout]);
 
-    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discount']);
+    checkout = await em.findOneOrFail(Checkout, checkout.id, { populate: ['discount'] });
 
     // Check discount loads correctly
     expect(checkout.discount.amount).toBe(1000)
@@ -43,7 +43,7 @@ describe("Remove entiy issue", () => {
     em.remove(checkout.discount);
     await em.flush();
 
-    checkout = await em.fork().findOneOrFail(Checkout, checkout.id, ['discount']);
+    checkout = await em.fork().findOneOrFail(Checkout, checkout.id, { populate: ['discount'] });
 
     expect(checkout.discount).toBeFalsy();
   });
@@ -53,7 +53,7 @@ describe("Remove entiy issue", () => {
     checkout.discount = new Discount(1000);
     await insertEntities([checkout]);
 
-    checkout = await em.findOneOrFail(Checkout, checkout.id, ['discount']);
+    checkout = await em.findOneOrFail(Checkout, checkout.id, { populate: ['discount'] });
 
     // Check discount loads correctly
     expect(checkout.discount.amount).toBe(1000)
@@ -73,7 +73,7 @@ describe("Remove entiy issue", () => {
 
     // Assert
     const newEm = em.fork();
-    checkout = await newEm.findOneOrFail(Checkout, checkout.id, ['discount']);
+    checkout = await newEm.findOneOrFail(Checkout, checkout.id, { populate: ['discount'] });
     const discounts = await newEm.find(Discount, {});
 
     expect(checkout.discount.amount).toBe(2000);

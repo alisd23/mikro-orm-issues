@@ -1,5 +1,4 @@
-import { LoadStrategy, MikroORM } from "@mikro-orm/core";
-import { EntityManager, MySqlDriver } from "@mikro-orm/mysql";
+import { MikroORM } from "@mikro-orm/core";
 
 /**
  * Delete all records from all the entity tables in the database
@@ -25,7 +24,9 @@ export async function migrateDatabase(orm: MikroORM) {
   const generator = orm.getSchemaGenerator();
 
   console.log(`> Dropping database schema: ${orm.config.get('dbName')}`);
-  await generator.dropSchema(undefined, true);
+  await generator.dropSchema({
+    dropMigrationsTable: true,
+  });
 
   console.log('> Creating schema from entities');
   await generator.createSchema();
